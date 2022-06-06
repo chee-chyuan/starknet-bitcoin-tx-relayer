@@ -1,0 +1,7 @@
+.env
+env
+nix-shell
+.venv
+.DS_Store
+shell.nix
+.vscode

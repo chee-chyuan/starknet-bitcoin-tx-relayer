@@ -1,0 +1,14 @@
+cairo-lang
+cairo-nile
+openzeppelin-cairo-contracts
+marshmallow-dataclass==8.5.3
+ecdsa
+fastecdsa
+sympy
+black
+pylint
+requests
+python-dotenv
+pysha3
+starknet.py
+starknet-devnet
