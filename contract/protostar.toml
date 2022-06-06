@@ -1,0 +1,19 @@
+["protostar.config"]
+protostar_version = "0.2.1"
+
+[profile.devnet.protostar.deploy]
+gateway_url = "http://127.0.0.1:5001/"
+
+[profile.testnet.protostar.deploy]
+network = "alpha-goerli"
+
+[profile.mainnet.protostar.deploy]
+network = "alpha-mainnet"
+
+["protostar.project"]
+libs_path = "lib"
+
+["protostar.contracts"]
+tx_relayer = [
+  "./src/tx_relayer.cairo",
+]
