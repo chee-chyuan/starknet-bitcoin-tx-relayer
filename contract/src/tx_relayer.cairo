@@ -1,10 +1,18 @@
 %lang starknet
-%builtins pedersen range_check bitwise
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.cairo_builtins import BitwiseBuiltin
+from starkware.starknet.common.syscalls import get_caller_address
 from starkware.cairo.common.uint256 import Uint256, uint256_eq
 from starkware.cairo.common.cairo_keccak.keccak import finalize_keccak,keccak_uint256s_bigend
 from starkware.cairo.common.alloc import alloc
+from src.ownable import Ownable_initializer, Ownable_only_owner
+
+@constructor
+func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    let (owner) = get_caller_address()
+    Ownable_initializer(owner)
+    return ()
+end
 
 @storage_var
 func latest_blocknumber() -> (block_number: felt):
@@ -12,6 +20,14 @@ end
 
 @storage_var
 func tx_roots(block_number:felt) -> (tx_root:Uint256):
+end
+
+@storage_var
+func relayers(address: felt)-> (is_relayer: felt):
+end
+
+@event
+func update_relayer(address: felt, is_relayer: felt):
 end
 
 @event 
@@ -22,9 +38,27 @@ end
 func relayer_tx_root_by_block_number{syscall_ptr:felt*, range_check_ptr, pedersen_ptr:HashBuiltin*}(
 block_number:felt, tx_root:Uint256
 ):
+    only_relayer()
     tx_roots.write(block_number,tx_root)
     latest_blocknumber.write(block_number)
     stored_tx_root.emit(block_number=block_number, tx_root=tx_root)
+    return ()
+end
+
+@view
+func get_is_relayer{syscall_ptr:felt*, range_check_ptr, pedersen_ptr: HashBuiltin*}(
+address: felt) -> (res: felt):
+    let (res) = relayers.read(address)
+    return (res=res)
+end
+
+@external
+func set_relayer{syscall_ptr:felt*, range_check_ptr, pedersen_ptr: HashBuiltin*}(
+address:felt, is_relayer:felt
+):
+    Ownable_only_owner()
+    relayers.write(address, is_relayer)
+    update_relayer.emit(address=address, is_relayer=is_relayer)
     return ()
 end
 
@@ -58,6 +92,15 @@ block_number:felt, index:felt, leaf:Uint256, path_len:felt, path:Uint256*
     let (stored_tx_root) = get_tx_root_by_block_number(block_number=block_number)
     let (is_equal) = uint256_eq(stored_tx_root, root)
     return (res=is_equal)
+end
+
+func only_relayer{syscall_ptr:felt*, range_check_ptr, pedersen_ptr:HashBuiltin*}():
+    let (caller) = get_caller_address()
+    let (is_relayer) = relayers.read(caller)
+    with_attr error_message("Ownable: caller is not the owner"):
+        assert is_relayer = 1
+    end
+    return ()
 end
 
 func mod_2{syscall_ptr:felt*, range_check_ptr, pedersen_ptr:HashBuiltin*}(val: felt)->(res: felt):
