@@ -5,11 +5,10 @@ from starkware.starknet.common.syscalls import get_caller_address
 from starkware.cairo.common.uint256 import Uint256, uint256_eq
 from starkware.cairo.common.cairo_keccak.keccak import finalize_keccak,keccak_uint256s_bigend
 from starkware.cairo.common.alloc import alloc
-from src.ownable import Ownable_initializer, Ownable_only_owner
+from src.ownable import Ownable_initializer, Ownable_only_owner, Ownable_get_owner
 
 @constructor
-func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-    let (owner) = get_caller_address()
+func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(owner:felt):
     Ownable_initializer(owner)
     return ()
 end
@@ -92,6 +91,13 @@ block_number:felt, index:felt, leaf:Uint256, path_len:felt, path:Uint256*
     let (stored_tx_root) = get_tx_root_by_block_number(block_number=block_number)
     let (is_equal) = uint256_eq(stored_tx_root, root)
     return (res=is_equal)
+end
+
+@view
+func get_owner{syscall_ptr:felt*, range_check_ptr, pedersen_ptr:HashBuiltin*}(
+) -> (owner:felt):
+    let (owner) = Ownable_get_owner()
+    return (owner=owner)
 end
 
 func only_relayer{syscall_ptr:felt*, range_check_ptr, pedersen_ptr:HashBuiltin*}():
