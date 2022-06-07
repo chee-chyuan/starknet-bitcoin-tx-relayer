@@ -21,4 +21,4 @@ tx_relayer = [
 [profile.ci.protostar.shared_command_configs]
 cairo_path = ["./lib/cairo_contracts/src"]
 no_color = true
-target = "contracts"
+target = "tests"
