@@ -12,7 +12,7 @@ namespace ITxRelayer:
     func get_is_relayer(address: felt) -> (res: felt):
     end
 
-    func relayer_tx_root_by_block_number(
+    func relay_tx_root_by_block_number(
     block_number:felt, tx_root:Uint256
     ):
     end
@@ -26,5 +26,10 @@ namespace ITxRelayer:
     func verify_txs_in_block(
     block_number:felt, index:felt, leaf:Uint256, path_len:felt, path:Uint256*
     ) -> (res:felt):
+    end
+
+    func generate_merkle_root(
+    current_leaf: Uint256, path_len:felt, path: Uint256*, index:felt
+    ) -> (res: Uint256):
     end
 end

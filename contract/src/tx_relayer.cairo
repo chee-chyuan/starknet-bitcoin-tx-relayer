@@ -1,6 +1,5 @@
 %lang starknet
-from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.cairo.common.cairo_builtins import BitwiseBuiltin
+from starkware.cairo.common.cairo_builtins import HashBuiltin, BitwiseBuiltin
 from starkware.starknet.common.syscalls import get_caller_address
 from starkware.cairo.common.uint256 import Uint256, uint256_eq
 from starkware.cairo.common.cairo_keccak.keccak import finalize_keccak,keccak_uint256s_bigend
@@ -34,7 +33,7 @@ func stored_tx_root(block_number:felt, tx_root:Uint256):
 end
 
 @external
-func relayer_tx_root_by_block_number{syscall_ptr:felt*, range_check_ptr, pedersen_ptr:HashBuiltin*}(
+func relay_tx_root_by_block_number{syscall_ptr:felt*, range_check_ptr, pedersen_ptr:HashBuiltin*}(
 block_number:felt, tx_root:Uint256
 ):
     only_relayer()
@@ -85,7 +84,7 @@ block_number:felt, index:felt, leaf:Uint256, path_len:felt, path:Uint256*
     let (local keccak_ptr_start) = alloc()
     let keccak_ptr = keccak_ptr_start
 
-    let (root) = generate_merkle_root{keccak_ptr=keccak_ptr}(current_leaf=leaf, path=path, path_size=path_len, index=index)
+    let (root) = generate_merkle_root{keccak_ptr=keccak_ptr}(current_leaf=leaf, path_len=path_len, path=path, index=index)
     finalize_keccak(keccak_ptr_start=keccak_ptr_start, keccak_ptr_end=keccak_ptr)
 
     let (stored_tx_root) = get_tx_root_by_block_number(block_number=block_number)
@@ -103,7 +102,7 @@ end
 func only_relayer{syscall_ptr:felt*, range_check_ptr, pedersen_ptr:HashBuiltin*}():
     let (caller) = get_caller_address()
     let (is_relayer) = relayers.read(caller)
-    with_attr error_message("Ownable: caller is not the owner"):
+    with_attr error_message("Caller is not a relayer"):
         assert is_relayer = 1
     end
     return ()
@@ -123,10 +122,10 @@ func mod_2{syscall_ptr:felt*, range_check_ptr, pedersen_ptr:HashBuiltin*}(val: f
 end
 
 func generate_merkle_root{syscall_ptr:felt*, range_check_ptr, pedersen_ptr:HashBuiltin*, bitwise_ptr: BitwiseBuiltin*, keccak_ptr : felt*}(
-current_leaf: Uint256, path: Uint256*, path_size:felt, index:felt
+current_leaf: Uint256, path_len:felt, path: Uint256*, index:felt
 ) -> (res: Uint256):
     alloc_locals
-    if path_size == 0:
+    if path_len == 0:
         return (res=current_leaf)
     end
 
@@ -149,6 +148,6 @@ current_leaf: Uint256, path: Uint256*, path_size:felt, index:felt
     let (keccak_res) = keccak_uint256s_bigend(n_elements=2, elements=to_hash)
 
     let (root) = generate_merkle_root(
-    current_leaf=keccak_res, path=&path[1], path_size=path_size-1, index=new_index/2)
+    current_leaf=keccak_res, path_len=path_len-1, path=&path[1], index=new_index/2)
     return (res=root)
 end
