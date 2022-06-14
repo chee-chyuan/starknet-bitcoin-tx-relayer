@@ -12,3 +12,4 @@ python-dotenv
 pysha3
 starknet.py
 starknet-devnet
+crypto-cpp-py[build]
