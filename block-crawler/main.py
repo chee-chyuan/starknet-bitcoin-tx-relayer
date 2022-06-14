@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 
 def get_path_to_store_json(dir, file_name):
     json_directory = os.environ['JSON_DIRECTORY']
+    json_directory = os.path.join("..", json_directory)
     is_dir_exist = os.path.exists(json_directory)
     if is_dir_exist != True:
         os.makedirs(json_directory)
@@ -87,8 +88,11 @@ def get_block_info_by_hash(block_hash):
 def main():
     load_dotenv()
 
-    block_number = 737787
-    while block_number < 737800:
+    starting_block = int(os.environ['STARTING_BLOCK'])
+    ending_block = int(os.environ['ENDING_BLOCK'])
+
+    block_number = starting_block
+    while block_number < ending_block:
         print(f"Current block number: {block_number}")
         block_hash_res = get_block_by_num(block_number)
         if block_hash_res["result"] == False:

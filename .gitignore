@@ -5,3 +5,5 @@ nix-shell
 .DS_Store
 shell.nix
 .vscode
+node_modules
+data
