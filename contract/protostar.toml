@@ -2,7 +2,7 @@
 protostar_version = "0.2.1"
 
 [profile.devnet.protostar.deploy]
-gateway_url = "http://127.0.0.1:5001/"
+gateway_url = "http://127.0.0.1:5050/"
 
 [profile.testnet.protostar.deploy]
 network = "alpha-goerli"
