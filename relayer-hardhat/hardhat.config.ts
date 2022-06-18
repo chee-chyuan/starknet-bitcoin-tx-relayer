@@ -37,7 +37,7 @@ const config: HardhatUserConfig = {
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
     devnet: {
-      url: "http://127.0.0.1:5001",
+      url: process.env.GATEWAY_URL,
     },
   },
   gasReporter: {
