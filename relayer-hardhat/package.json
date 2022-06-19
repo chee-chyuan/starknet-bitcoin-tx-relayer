@@ -1,5 +1,9 @@
 {
   "name": "hardhat-project",
+  "scripts": {
+    "deploy": "hardhat run ./scripts/deploy_tx_relayer.ts",
+    "relay": "hardhat run ./scripts/relay_block.ts"
+  },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.6",
     "@nomiclabs/hardhat-etherscan": "^3.1.0",
