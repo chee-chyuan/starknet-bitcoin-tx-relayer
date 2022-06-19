@@ -1,4 +1,4 @@
-import { Contract, number, Result } from "starknet";
+import { Contract, Result } from "starknet";
 
 export const getCurrentBlockNumber = async (
   contract: Contract
@@ -61,7 +61,7 @@ const convertHexToUint256 = (hexVal: string): bigint[] => {
   }
 
   const noOfZerosToPad = hexVal.length % 64;
-  if (noOfZerosToPad != 0) {
+  if (noOfZerosToPad !== 0) {
     const toPad = "0".repeat(noOfZerosToPad);
     hexVal = toPad + hexVal;
   }

@@ -1,4 +1,6 @@
 import keccak256 from "keccak256";
+import { toBN } from "starknet/dist/utils/number";
+import { bnToUint256, Uint256 } from "starknet/dist/utils/uint256";
 
 export const createMerkleRootWithPathKeccak256 = (
   keccakTxs: string[],
@@ -47,7 +49,7 @@ export const createMerkleRootWithPathKeccak256FromHex = (
   return createMerkleRootWithPathKeccak256(keccakTxs, index);
 };
 
-export const convertHexToUint256 = (hexVal: string): bigint[] => {
+export const convertHexToUint256Array = (hexVal: string): bigint[] => {
   if (hexVal.startsWith("0x")) {
     hexVal = hexVal.slice(2);
   }
@@ -69,4 +71,9 @@ export const convertHexToUint256 = (hexVal: string): bigint[] => {
   });
 
   return wordsUint256;
+};
+
+export const convertHexToUint256 = (hexVal: string): Uint256 => {
+  const uint256Res = bnToUint256(hexVal);
+  return uint256Res;
 };
