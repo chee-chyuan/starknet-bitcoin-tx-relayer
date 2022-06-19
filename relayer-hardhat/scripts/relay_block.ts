@@ -1,3 +1,5 @@
+/* eslint-disable node/no-unsupported-features/es-syntax */
+/* eslint-disable camelcase */
 /* eslint-disable node/no-unsupported-features/es-builtins */
 import { starknet } from "hardhat";
 import * as dotenv from "dotenv";
@@ -7,6 +9,7 @@ import { StarknetContract } from "@shardlabs/starknet-hardhat-plugin/dist/src/ty
 import { Account } from "@shardlabs/starknet-hardhat-plugin/dist/src/account";
 // eslint-disable-next-line node/no-missing-import
 import {
+  convertHexToUint256Array,
   convertHexToUint256,
   createMerkleRootWithPathKeccak256FromHex,
 } from "./utils/utils";
@@ -66,16 +69,24 @@ const setup = async (): Promise<Setup> => {
   };
 };
 
+interface Uint256Hardhat {
+  low: BigInt;
+  high: BigInt;
+}
+
 const relayMerkleRoot = async (
   txRelayer: StarknetContract,
   relayerAccount: Account,
   blockNumber: number,
-  merkleRoot: bigint[]
+  merkleRoot: Uint256Hardhat
 ) => {
   await relayerAccount.invoke(
     txRelayer,
     "relay_tx_root_by_block_number",
-    { block_number: blockNumber, tx_root: merkleRoot },
+    {
+      block_number: blockNumber,
+      tx_root: merkleRoot,
+    },
     { maxFee: BigInt("65180000000000000") }
   );
 };
@@ -90,6 +101,7 @@ const main = async () => {
     blockInfoDirectory,
   } = await setup();
 
+  // maybe i can move this invoke function during deployment, we will see
   await ownerAccount.invoke(
     txRelayer,
     "set_relayer",
@@ -97,20 +109,44 @@ const main = async () => {
     { maxFee: BigInt("65180000000000000") }
   );
 
-  for (let i = startBlock; i <= startBlock; i++) {
+  for (let i = startBlock; i <= endBlock; i++) {
+    console.log(`[RelayBlock] Relaying block ${i}`);
     const fileName = `block_info_${i}.json`;
     const fullPath = path.join(blockInfoDirectory, fileName);
 
-    const fileData = readFileSync(fullPath, "utf8");
-    const jsonObject = JSON.parse(fileData);
-    const txs: string[] = jsonObject.tx;
+    try {
+      const fileData = readFileSync(fullPath, "utf8");
+      const jsonObject = JSON.parse(fileData);
+      const txs: string[] = jsonObject.tx;
 
-    // index is irrelavant here, we just need the root
-    const [merkleRoot] = createMerkleRootWithPathKeccak256FromHex(txs, 0);
-    const merkleRootUint256 = convertHexToUint256(merkleRoot);
+      // index is irrelavant here, we just need the root
+      const [merkleRoot] = createMerkleRootWithPathKeccak256FromHex(txs, 0);
 
-    // speed improvement, we can use multi invoke
-    await relayMerkleRoot(txRelayer, relayerAccount, i, merkleRootUint256);
+      console.log(`merkletRoot = ${merkleRoot}`);
+      const merkleRootUint256 = convertHexToUint256Array(merkleRoot);
+
+      // speed improvement, we can use multi invoke
+      // await relayMerkleRoot(txRelayer, ownerAccount, i, {
+      //   low: BigInt("10"),
+      //   high: BigInt("10"),
+      // });
+
+      const relayTxRoot = await relayerAccount.invoke(
+        txRelayer,
+        "relay_tx_root_by_block_number",
+        {
+          block_number: i,
+          tx_root: { low: merkleRootUint256[1], high: merkleRootUint256[0] },
+        },
+        { maxFee: BigInt("65180000000000000") }
+      );
+
+      console.log(`relayTxRoot: ${relayTxRoot}`);
+    } catch (exception) {
+      console.log(`[RelayBlock] Error: ${exception}`);
+      console.log("[RelayBlock] Stopping the relayer now");
+      break;
+    }
   }
 };
 

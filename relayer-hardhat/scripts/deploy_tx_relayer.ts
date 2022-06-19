@@ -10,8 +10,9 @@ const main = async () => {
   const txRelayer = await TxRelayerFactory.deploy({ owner: ownerAddress });
   console.log(`txRelayer address: ${txRelayer.address}`);
 };
-
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+main()
+  .then(() => (process.exitCode = 0))
+  .catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });

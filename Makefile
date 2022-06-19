@@ -5,3 +5,11 @@ server:
 
 crawl:
 	@python3 ./block-crawler/main.py
+
+deploy:
+		@cd ./relayer-hardhat && \
+		npm run deploy 
+
+relay:
+		@cd ./relayer-hardhat && \
+		npm run relay 

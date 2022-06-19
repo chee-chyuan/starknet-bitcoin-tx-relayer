@@ -1,0 +1,68 @@
+[
+    {
+        "members": [
+            {
+                "name": "low",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "high",
+                "offset": 1,
+                "type": "felt"
+            }
+        ],
+        "name": "Uint256",
+        "size": 2,
+        "type": "struct"
+    },
+    {
+        "inputs": [
+            {
+                "name": "val",
+                "type": "Uint256"
+            }
+        ],
+        "name": "store_val",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "val",
+                "type": "felt"
+            }
+        ],
+        "name": "store_felt",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "val_felt",
+                "type": "felt"
+            },
+            {
+                "name": "val",
+                "type": "Uint256"
+            }
+        ],
+        "name": "store_felt_val",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "view_val",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "Uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]
