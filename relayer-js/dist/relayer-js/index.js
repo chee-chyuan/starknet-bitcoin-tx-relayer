@@ -37,18 +37,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv = __importStar(require("dotenv"));
 const path_1 = __importDefault(require("path"));
-const fs_1 = require("fs");
+const tx_relayer_abi_json_1 = __importDefault(require("../frontend/src/shared/tx_relayer_abi.json"));
 dotenv.config({ path: path_1.default.resolve(__dirname, "../../.env") });
 const starknet = __importStar(require("starknet"));
-const starknet_1 = require("starknet");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const provider = new starknet.Provider({
         baseUrl: process.env.GATEWAY_URL,
         feederGatewayUrl: "feeder_gateway",
         gatewayUrl: "gateway",
     });
-    const tx_relayer_abi = starknet_1.json.parse((0, fs_1.readFileSync)("../frontend/src/shared/tx_relayer_abi.json").toString("ascii"));
-    const txRelayer2 = new starknet.Contract(tx_relayer_abi, process.env.TX_RELAYER, provider);
+    const txRelayer2 = new starknet.Contract(tx_relayer_abi_json_1.default, process.env.TX_RELAYER, provider);
     console.log("hi");
     // const args = [
     //   number.toFelt("0x1"),
@@ -58,10 +56,8 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     //   number.toFelt(1),
     //   number.toFelt(1),
     // ];
-    const args = [1];
     // const isVerified = await txRelayer2.call("verify_txs_in_block", [args]);
-    const isVerified = yield txRelayer2.verify_txs_in_block(1, 1, [1, 1], [1, 1, 1, 1]);
-    console.log(isVerified);
+    // console.log(isVerified);
     // // new random account
     // const starkKeyPair = ec.genKeyPair();
     // const starkKeyPub = ec.getStarkKey(starkKeyPair);

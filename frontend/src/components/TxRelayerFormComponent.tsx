@@ -25,7 +25,6 @@ function TxRelayerForm(props: TxRelayerProp) {
     }),
     onSubmit: (values) => {
       console.log(JSON.stringify(values, null, 2));
-
       // handle merkle Path
       // call contract
       formatAndVerifyMerklePath(
@@ -36,9 +35,10 @@ function TxRelayerForm(props: TxRelayerProp) {
       )
         .then((res) => {
           setHasValue(true);
-          setIsVerified(res["res"] as boolean);
+          setIsVerified(res[0].words[0]);
         })
-        .catch(() => {
+        .catch((err) => {
+          debugger;
           setHasValue(false);
         });
 

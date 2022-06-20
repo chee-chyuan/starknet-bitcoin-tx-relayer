@@ -8,7 +8,7 @@ import tx_relayer_abi from "./shared/tx_relayer_abi.json";
 import TxRelayerForm from "./components/TxRelayerFormComponent";
 // import * as dotenv from "dotenv";
 
-const TX_RELAYER_ADDR = "0xsaddasfsd";
+const TX_RELAYER_ADDR = "0x00776aa5ec11fefb75cd6cfc5a101502b1b47a364f288751317ad69f9b216c4b";
 
 function App() {
   const [txRelayer, setTxRelayer] = useState<Contract>();
