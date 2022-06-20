@@ -1,4 +1,5 @@
 import argparse
+import json
 from utils import verify_merkle_root_keccak256
 
 
@@ -10,6 +11,8 @@ def main():
                         help="Merkle root")
     parser.add_argument("-p", "--path", nargs='+',
                         help="Merkle path")
+    parser.add_argument("-f", "--file",
+                        help="File Containing Merkle path")
     parser.add_argument("-i", "--index", type=int,
                         default=None,
                         help="Transaction index")
@@ -21,6 +24,12 @@ def main():
                                            args.path, args.index)
         print(f"Verify result: {res}")
 
+    if args.file != None and args.index != None and args.root != None:
+        f = open(args.file)
+        path = json.load(f)
+        res = verify_merkle_root_keccak256(args.root,
+                                           path, args.index)
+        print(f"Verify result: {res}")
 
 if __name__ == "__main__":
     main()

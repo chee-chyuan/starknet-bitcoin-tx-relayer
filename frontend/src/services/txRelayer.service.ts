@@ -1,4 +1,4 @@
-import { Contract, Result } from "starknet";
+import { Contract, number, Result } from "starknet";
 
 export const getCurrentBlockNumber = async (
   contract: Contract
@@ -20,12 +20,14 @@ export const formatAndVerifyMerklePath = async (
     unformattedPath = unformattedPath.substring(0, unformattedPath.length - 1);
   }
 
-  const paths = unformattedPath.split(",");
+  const paths = unformattedPath.split(",").map((path) => {
+    return path.replaceAll('"', "").replaceAll("'", "").replaceAll(" ", "");
+  });
   //TODO: might need to remove ' or " in the string here. we will test later
 
   const leaf = paths[0];
-  const merklePath = paths.slice(2);
-  const res = verifyMerklePath(contract, blockNumber, index, leaf, merklePath);
+  const merklePath = paths.slice(1);
+  const res = await verifyMerklePath(contract, blockNumber, index, leaf, merklePath);
   return res;
 };
 
@@ -37,21 +39,11 @@ export const verifyMerklePath = async (
   merklePath: string[]
 ): Promise<Result> => {
   const leafUint256 = convertHexToUint256(leaf);
-  const merklePathLength = merklePath.length;
   const merklePathUint256 = merklePath.map((path) => {
     return convertHexToUint256(path);
   });
-  const merklePathUint256Flat = merklePathUint256.flat();
 
-  const args = [
-    blockNumber,
-    index,
-    ...leafUint256,
-    merklePathLength,
-    ...merklePathUint256Flat,
-  ];
-
-  const isVerified = await contract.call("verify_txs_in_block", [args]);
+  const isVerified = await contract.verify_txs_in_block(blockNumber, index, leafUint256, merklePathUint256)
   return isVerified;
 };
 

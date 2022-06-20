@@ -12,8 +12,7 @@ function BlockInfo(props: BlockInfoProp) {
     setTimeout(() => {
       getCurrentBlockNumber(props.txRelayer)
         .then((res) => {
-          // setCurrentBlockNumber(res["block_number"] as number);
-          setCurrentBlockNumber(currentBlockNumber + 1);
+          setCurrentBlockNumber(res[0].words[0]);
         })
         .catch(() => {
           // for testing only
