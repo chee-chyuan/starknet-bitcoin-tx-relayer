@@ -27,7 +27,13 @@ export const formatAndVerifyMerklePath = async (
 
   const leaf = paths[0];
   const merklePath = paths.slice(1);
-  const res = await verifyMerklePath(contract, blockNumber, index, leaf, merklePath);
+  const res = await verifyMerklePath(
+    contract,
+    blockNumber,
+    index,
+    leaf,
+    merklePath
+  );
   return res;
 };
 
@@ -38,12 +44,22 @@ export const verifyMerklePath = async (
   leaf: string,
   merklePath: string[]
 ): Promise<Result> => {
+  debugger;
   const leafUint256 = convertHexToUint256(leaf);
+  const leafUint256Hex = leafUint256.map((val) => {
+    return "0x" + val.toString(16);
+  });
   const merklePathUint256 = merklePath.map((path) => {
     return convertHexToUint256(path);
   });
 
-  const isVerified = await contract.verify_txs_in_block(blockNumber, index, leafUint256, merklePathUint256)
+  const isVerified = await contract.verify_txs_in_block(
+    blockNumber,
+    index,
+    leafUint256Hex.reverse(),
+    []
+  );
+  // const isVerified = await contract.verify_txs_in_block(blockNumber, index, leafUint256, merklePathUint256)
   return isVerified;
 };
 
@@ -52,11 +68,6 @@ const convertHexToUint256 = (hexVal: string): bigint[] => {
     hexVal = hexVal.slice(2);
   }
 
-  const noOfZerosToPad = hexVal.length % 64;
-  if (noOfZerosToPad !== 0) {
-    const toPad = "0".repeat(noOfZerosToPad);
-    hexVal = toPad + hexVal;
-  }
   const words: string[] = [];
   for (let i = 0; i < hexVal.length; i += 32) {
     const word = hexVal.slice(i, i + 32);
