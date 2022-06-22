@@ -13,3 +13,7 @@ deploy:
 relay:
 		@cd ./relayer-hardhat && \
 		npm run relay 
+
+web: 
+	@cd ./frontend && \
+	npm start
