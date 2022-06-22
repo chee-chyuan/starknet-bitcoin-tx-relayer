@@ -6,15 +6,16 @@ import { Contract, Abi } from "starknet";
 import BlockInfo from "./components/BlockInfoComponent";
 import tx_relayer_abi from "./shared/tx_relayer_abi.json";
 import TxRelayerForm from "./components/TxRelayerFormComponent";
-// import * as dotenv from "dotenv";
 
-const TX_RELAYER_ADDR = "0x062aaa40e14d08208e8c8e4d68a27015259326fbe68bcf78fcfdc18a36f083f0";
+// const TX_RELAYER_ADDR = "0x062aaa40e14d08208e8c8e4d68a27015259326fbe68bcf78fcfdc18a36f083f0";
+const TX_RELAYER_ADDR = process.env.REACT_APP_TX_RELAYER!;
+const BASE_URL = process.env.REACT_APP_BASEURL!;
 
 function App() {
   const [txRelayer, setTxRelayer] = useState<Contract>();
   useEffect(() => {
     const starknetProvider = new starknet.Provider({
-      baseUrl: "http://localhost:5050",
+      baseUrl: BASE_URL,
       feederGatewayUrl: "feeder_gateway",
       gatewayUrl: "gateway",
     });
