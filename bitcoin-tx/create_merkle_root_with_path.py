@@ -12,6 +12,7 @@ def main():
     parser.add_argument("-i", "--index", type=int,
                         default=None,
                         help="Transaction index")
+    parser.add_argument("-o", "--output", help="Return the path in output file")
 
     args = parser.parse_args()
 
@@ -20,6 +21,12 @@ def main():
             args.txs, args.index)
         print(f"MerkleRoot: {merkle_root}")
         print(f"MerklePath: {merkle_path}")
+
+        if args.output != None:
+            json_object = json.dumps(merkle_path, indent = 0)
+            with open(args.output, "w") as outfile:
+                outfile.write(json_object)
+
     if args.file != None and args.index != None:
 
         #open file at path and convert it to an array
@@ -30,6 +37,11 @@ def main():
             txs, args.index)
         print(f"MerkleRoot: {merkle_root}")
         print(f"MerklePath: {merkle_path}")
+
+        if args.output != None:
+            json_object = json.dumps(merkle_path, indent = 0)
+            with open(args.output, "w") as outfile:
+                outfile.write(json_object)
 
 
 if __name__ == "__main__":
