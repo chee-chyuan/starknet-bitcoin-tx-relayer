@@ -31,3 +31,5 @@ The block info will be stored in the directory specified in `JSON_DIRECTORY`  (k
 5. The path will be generated in the output file which we have specified previously.
 6. Input the block number which we get our txs from, the index which we used to generate our path, and copy and paste the content from the output file into our webpage.
 7. If everything goes well, it will say that the verification is successful.
+
+<img width="816" alt="image" src="https://user-images.githubusercontent.com/60590919/175042184-7a8a5606-2b96-4eed-a80d-901322e26c91.png">
