@@ -50,16 +50,20 @@ export const verifyMerklePath = async (
     return "0x" + val.toString(16);
   });
   const merklePathUint256 = merklePath.map((path) => {
-    return convertHexToUint256(path);
+    const pathUint256 = convertHexToUint256(path);
+    return [
+      "0x" + pathUint256[1].toString(16),
+      "0x" + pathUint256[0].toString(16),
+    ];
   });
 
+  debugger;
   const isVerified = await contract.verify_txs_in_block(
     blockNumber,
     index,
     leafUint256Hex.reverse(),
-    []
+    merklePathUint256
   );
-  // const isVerified = await contract.verify_txs_in_block(blockNumber, index, leafUint256, merklePathUint256)
   return isVerified;
 };
 
