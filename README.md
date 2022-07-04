@@ -48,7 +48,16 @@ To setup `.venv` in the root folder:
 ```
 python3 -m venv .venv
 source .venv/bin/activate
+```
+
+On M1:
+```
 pip install -r requirements.txt
+```
+
+On Linux:
+```
+pip install pysha3
 ```
 
 these should download all dependencies in the `requirements.txt` file.
