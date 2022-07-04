@@ -41,6 +41,19 @@ make web
  to start up our frontend server
 
 ## Verifying our transaction
+
+Our python script that we will need to use to generate merkle path relies on a few dependencies. I would generally recommend to use a virtual environment to not mess up with our global python env.
+
+To setup `.venv` in the root folder: 
+```
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+these should download all dependencies in the `requirements.txt` file.
+
+
 1. In our webpage, we will be able to see the latest block that has been relayed to the chain.
 2. To test that our verification is done correctly, we will need to input the `index` of our transaction as well as `path` of our merkle proof. To facilitate the generation of proof conveniently, we will be using some cli tools included in this repo as well.
 3. change directory
